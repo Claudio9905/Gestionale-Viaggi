@@ -19,4 +19,4 @@ TECNOLOGIE USATE:
 - Spring Web
 - PostgreSQL (per la parte Database)
 - Postman(per le chiamate API)
-- Dipendenze: ( Cloudinary, per gestire la parte dell'upload dell'immagine di profilo del dipendente tramite l'URL estratto / Lombok / Validation per gestire l'aspetto delle validazioni degli endpoint REST) 
+- Dipendenze: ( Cloudinary, per gestire la parte dell'upload dell'immagine di profilo del dipendente tramite l'URL estratto / Lombok / Validation, per gestire l'aspetto delle validazioni degli endpoint REST) 
