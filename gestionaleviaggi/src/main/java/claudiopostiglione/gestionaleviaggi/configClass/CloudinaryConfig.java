@@ -1,5 +1,7 @@
 package claudiopostiglione.gestionaleviaggi.configClass;
 
+import claudiopostiglione.gestionaleviaggi.exceptions.CloudinaryExcpetion;
+import claudiopostiglione.gestionaleviaggi.exceptions.ValidationException;
 import com.cloudinary.Cloudinary;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,9 +16,14 @@ public class CloudinaryConfig {
     @Bean
     public Cloudinary getImageUpLoader(@Value("${cloudinary.name}") String cloudName, @Value("${cloudinary.key}") String apiKey, @Value("${cloudinary.secret}") String apiSecret){
 
+        //Controllo se i dati passati sono giusti e se ci sono
+        try {
         System.out.println("Cloudname: " + cloudName);
         System.out.println("ApiKey: " + apiKey );
         System.out.println("ApiSecret: " + apiSecret);
+        }catch (CloudinaryExcpetion ex){
+            System.out.println("Attenzione, alcuni dati non sono stati passati");
+        }
 
         Map<String,String> config = new HashMap<>();
         config.put("cloud_name", cloudName);

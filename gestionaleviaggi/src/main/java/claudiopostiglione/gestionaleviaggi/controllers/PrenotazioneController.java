@@ -2,6 +2,7 @@ package claudiopostiglione.gestionaleviaggi.controllers;
 
 
 import claudiopostiglione.gestionaleviaggi.entities.Prenotazione;
+import claudiopostiglione.gestionaleviaggi.exceptions.ValidationException;
 import claudiopostiglione.gestionaleviaggi.payload.PrenotazioneDTO;
 import claudiopostiglione.gestionaleviaggi.services.PrenotazioneService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,12 @@ public class PrenotazioneController {
     // POST http://localhost:3005/prenotazione + payload
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PrenotazioneController createPrenotazione(@RequestBody @Validated PrenotazioneDTO body, BindingResult validationResult) {
+    public Prenotazione createPrenotazione(@RequestBody @Validated PrenotazioneDTO body, BindingResult validationResult) {
+        if(validationResult.hasErrors()){
+            throw new ValidationException(validationResult.getFieldErrors().stream().map(fieldError -> fieldError.getDefaultMessage()).toList());
+        }
 
+        return this.prenotazioneService.savePrenotazione(body);
     }
 
     // GET  http://localhost:3005/prenotazione
