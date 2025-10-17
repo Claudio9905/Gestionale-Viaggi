@@ -16,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+
 public class Dipendente {
 
     //Attributi
@@ -50,4 +50,15 @@ public class Dipendente {
     //Metodi
 
 
+    @Override
+    public String toString() {
+        return "|-- Dipendente " +
+                " ID = " + id +
+                " Nome= " + nome + '\'' +
+                " Congnome= " + congnome + '\'' +
+                " Username= " + username + '\'' +
+                " E-mail= " + email + '\'' +
+                " ImageProfile='" + imageProfile + '\'' +
+                "-- |";
+    }
 }

@@ -12,9 +12,7 @@ public record PrenotazioneDTO(
         LocalDate dataRichiesta,
         @Size(min = 0, max = 150, message = "Le note/preferenze possono non esserci oppure avere un massimo di 150 caratteri")
         String notePreferenze,
-        @NotBlank(message = "L'ID del dipendente è obbligatorio")
         UUID dipendenteId,
-        @NotBlank(message = "L'ID del viaggio è obbligatorio")
         UUID viaggioId
 ) {
 }

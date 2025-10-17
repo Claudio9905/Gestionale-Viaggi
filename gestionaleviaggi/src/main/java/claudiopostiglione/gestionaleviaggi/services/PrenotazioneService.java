@@ -1,7 +1,9 @@
 package claudiopostiglione.gestionaleviaggi.services;
 
+import claudiopostiglione.gestionaleviaggi.entities.Dipendente;
 import claudiopostiglione.gestionaleviaggi.entities.Prenotazione;
 import claudiopostiglione.gestionaleviaggi.entities.Viaggio;
+import claudiopostiglione.gestionaleviaggi.exceptions.BadRequestException;
 import claudiopostiglione.gestionaleviaggi.exceptions.IdNotFoundException;
 import claudiopostiglione.gestionaleviaggi.payload.PrenotazioneDTO;
 import claudiopostiglione.gestionaleviaggi.repositories.PrenotazioneRepository;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -31,14 +34,24 @@ public class PrenotazioneService {
     // 1. per la chiamata POST
     public Prenotazione savePrenotazione(PrenotazioneDTO body) {
 
+        Dipendente dipendenteFound = this.dipendenteService.findDipendenteById(body.dipendenteId());
+        Viaggio viaggioFound = this.viaggioService.findViaggioById(body.viaggioId());
 
+        if (!(body.dataRichiesta().equals(viaggioFound.getDataDestinazione()))) {
+            throw new BadRequestException("Impossibile fare la prenotazione, la data richiesta non corrisponde con la data della destinazione");
+        }
 
+        List<Prenotazione> prenotazioniAttive = prenotazioneRepository.findByDipendenteIdAndDataRichiesta(dipendenteFound.getId(),viaggioFound.getDataDestinazione());
+        if(!prenotazioniAttive.isEmpty()) throw new BadRequestException("Il dipendente " + dipendenteFound.getNome() + dipendenteFound.getCongnome() + " con ID " + dipendenteFound.getId() + " è già impegnato in un viaggio");
 
-        Prenotazione newPrenotazione = new Prenotazione(body.dataRichiesta(), body.notePreferenze());
+        Prenotazione newPrenotazione = new Prenotazione(body.dataRichiesta(), body.notePreferenze(), dipendenteFound, viaggioFound);
+
+        dipendenteFound.getListaPrenotazioni().add(newPrenotazione);
+        viaggioFound.getListaPrenotazione().add(newPrenotazione);
 
         this.prenotazioneRepository.save(newPrenotazione);
 
-        log.info("La prenotazione " + newPrenotazione  +" è stata salvata corretamente");
+        log.info("La prenotazione " + newPrenotazione + " è stata salvata corretamente");
         return newPrenotazione;
 
     }

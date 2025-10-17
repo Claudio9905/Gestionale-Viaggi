@@ -15,7 +15,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class Prenotazione {
 
     //Attributi
@@ -36,11 +35,21 @@ public class Prenotazione {
     private Viaggio viaggio;
 
     //Costruttori
-    public Prenotazione(LocalDate dataRichiesta, String notePreferenze){
+    public Prenotazione(LocalDate dataRichiesta, String notePreferenze, Dipendente dipendente, Viaggio viaggio){
         this.dataRichiesta = dataRichiesta;
         this.notePreferenze = notePreferenze;
+        this.dipendente = dipendente;
+        this.viaggio = viaggio;
     }
 
     //Metodi
 
+    @Override
+    public String toString() {
+        return "|-- Prenotazione: " +
+                " ID: " + id +
+                " Data richiesta: " + dataRichiesta +
+                " Note/Preferenze: " + notePreferenze + '\'' +
+                "--|";
+    }
 }
