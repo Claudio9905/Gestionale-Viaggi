@@ -20,3 +20,5 @@ TECNOLOGIE USATE:
 - PostgreSQL (per la parte Database)
 - Postman(per le chiamate API)
 - Dipendenze: ( Cloudinary, per gestire la parte dell'upload dell'immagine di profilo del dipendente tramite l'URL estratto / Lombok / Validation, per gestire l'aspetto delle validazioni degli endpoint REST) 
+
+Link alla collezione di Postman : https://cloudpost10-6564010.postman.co/workspace/Kako-99's-Workspace~2bdb2d02-2878-4d32-81f9-343f46a4e8e5/collection/49230158-210a2547-c89c-4e18-923d-001580946d18?action=share&source=copy-link&creator=49230158
