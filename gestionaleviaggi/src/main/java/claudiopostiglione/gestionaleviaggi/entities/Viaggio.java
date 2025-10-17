@@ -1,6 +1,7 @@
 package claudiopostiglione.gestionaleviaggi.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class Viaggio {
     @Column(name = "Destinazione")
     private String destinazione;
     @Column(name = "Data")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dataDestinazione;
     @Column(name = "Orario_Partenza")
     private LocalTime orarioPartenza;

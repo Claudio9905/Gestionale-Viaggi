@@ -1,5 +1,6 @@
 package claudiopostiglione.gestionaleviaggi.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class Prenotazione {
     @GeneratedValue
     private UUID id;
     @Column(name = "Data_Richiesta")
+    @JsonFormat(pattern = "dd-WW-yyyy")
     private LocalDate dataRichiesta;
     @Column(name = "Note/Preferenze_dipendente")
     private String notePreferenze;
