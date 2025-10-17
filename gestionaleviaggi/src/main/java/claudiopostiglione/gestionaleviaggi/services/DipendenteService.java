@@ -1,11 +1,91 @@
 package claudiopostiglione.gestionaleviaggi.services;
 
+import claudiopostiglione.gestionaleviaggi.entities.Dipendente;
+import claudiopostiglione.gestionaleviaggi.exceptions.BadRequestException;
+import claudiopostiglione.gestionaleviaggi.exceptions.IdNotFoundException;
+import claudiopostiglione.gestionaleviaggi.payload.DipendenteDTO;
 import claudiopostiglione.gestionaleviaggi.repositories.DipendenteRepository;
+import com.cloudinary.Cloudinary;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
+@Slf4j
 public class DipendenteService {
     @Autowired
     private DipendenteRepository dipendenteRepository;
+
+    @Autowired
+    private Cloudinary imageUploader;
+
+    // 1. per la chiamata POST
+    public Dipendente saveDipendente(DipendenteDTO body) {
+
+        //Controllo che l'email non è già in uso
+        this.dipendenteRepository.findByEmail(body.email()).ifPresent(dipendente -> {
+            throw new BadRequestException("Attenzione, l'email " + dipendente.getEmail() + " esiste già");
+        });
+
+        Dipendente newDipendente = new Dipendente(body.nome(), body.cognome(), body.username(), body.email());
+        newDipendente.setImageProfile("https://ui-avatars.com/api/?name=" + body.nome() + "+" + body.cognome());
+
+        this.dipendenteRepository.save(newDipendente);
+
+        log.info("Il dipendente " + body.nome() + body.cognome() + " è stato salvato corretamente");
+        return newDipendente;
+
+    }
+
+    //2. per la chiamata GET
+    public Page<Dipendente> findAllDipendenti(int numPage, int sizePage, String sortBy) {
+
+        if (sizePage > 50) sizePage = 50;
+        sortBy = "nome";
+        Pageable pageable = PageRequest.of(numPage, sizePage, Sort.by(sortBy).ascending());
+
+        return this.dipendenteRepository.findAll(pageable);
+
+    }
+
+    //3 per la chiamata GET ID
+    public Dipendente findDipendenteById(UUID dipendenteID) {
+        return this.dipendenteRepository.findById(dipendenteID).orElseThrow(() -> new IdNotFoundException("Il dipendente con ID " + dipendenteID + " non è stato trovato"));
+    }
+
+    //4. per la chiamata PUT
+    public Dipendente findDipendenteByIdAndUpdate(UUID dipendenteId, DipendenteDTO newBody) {
+
+        //Controllo l'ID del dipendente se esiste
+        Dipendente dipendenteFound = this.findDipendenteById(dipendenteId);
+
+        if (!(dipendenteFound.getEmail().equals(newBody.email()))) {
+            this.dipendenteRepository.findByEmail(newBody.email()).ifPresent(dipendente -> {
+                throw new BadRequestException("L'email " + dipendente.getEmail() + " esiste già");
+            });
+        }
+
+        dipendenteFound.setNome(newBody.nome());
+        dipendenteFound.setCongnome(newBody.cognome());
+        dipendenteFound.setUsername(newBody.username());
+        dipendenteFound.setEmail(newBody.email());
+        dipendenteFound.setImageProfile("https://ui-avatars.com/api/?name=" + newBody.nome() + "+" + newBody.cognome());
+
+        Dipendente updateDipendente = this.dipendenteRepository.save(dipendenteFound);
+        log.info("Il dipendente " + newBody.nome() + newBody.cognome() + " con ID " + updateDipendente.getId() + " è stato aggiornato correttamente");
+        return updateDipendente;
+    }
+
+    //5. per la chiamata DELETE
+    public void findDipendenteByIdAndDelete(UUID dipendenteId) {
+        Dipendente dipendenteFound = this.findDipendenteById(dipendenteId);
+        this.dipendenteRepository.delete(dipendenteFound);
+    }
+
 }
