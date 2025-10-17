@@ -1,5 +1,6 @@
 package claudiopostiglione.gestionaleviaggi.services;
 
+import claudiopostiglione.gestionaleviaggi.entities.StatoDestinazione;
 import claudiopostiglione.gestionaleviaggi.entities.Viaggio;
 import claudiopostiglione.gestionaleviaggi.exceptions.IdNotFoundException;
 import claudiopostiglione.gestionaleviaggi.payload.ViaggioDTO;
@@ -68,6 +69,15 @@ public class ViaggioService {
     public void findViaggioByIdAndDelete(UUID viaggioId) {
         Viaggio viaggioFound = this.findViaggioById(viaggioId);
         this.viaggioRepository.delete(viaggioFound);
+    }
+
+    //6. per la chiamata PATCH riguardo alla modifica dello stato del viaggio
+    public Viaggio findViaggioByIdAndUpdateStato(ViaggioDTO body, UUID viaggioId){
+        Viaggio viaggioFound = findViaggioById(viaggioId);
+        viaggioFound.setStato(body.stato());
+        this.viaggioRepository.save(viaggioFound);
+        log.info("| Lo stato del viaggio con ID: " + viaggioFound.getId() + " e destinazione: " + viaggioFound.getDestinazione() + " è stato aggiornato" );
+        return viaggioFound;
     }
 
 }

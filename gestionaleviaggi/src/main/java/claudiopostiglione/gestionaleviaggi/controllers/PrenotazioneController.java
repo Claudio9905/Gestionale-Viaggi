@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/prenotazione")
+@RequestMapping("/prenotazioni")
 public class PrenotazioneController {
 
     @Autowired
