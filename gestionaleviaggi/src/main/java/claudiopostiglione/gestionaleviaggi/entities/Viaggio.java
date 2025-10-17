@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,6 +29,8 @@ public class Viaggio {
     private String destinazione;
     @Column(name = "Data")
     private LocalDate dataDestinazione;
+    @Column(name = "Orario_Partenza")
+    private LocalTime orarioPartenza;
     @Column(name = "Stato_Destinazione")
     @Enumerated(EnumType.STRING)
     private StatoDestinazione stato;
@@ -37,9 +40,10 @@ public class Viaggio {
     private List<Prenotazione> listaPrenotazione;
 
     //Costruttori
-    public Viaggio(String destinazione, LocalDate dataDestinazione, StatoDestinazione stato){
+    public Viaggio(String destinazione, LocalDate dataDestinazione,LocalTime orarioPartenza, StatoDestinazione stato){
         this.destinazione = destinazione;
         this.dataDestinazione = dataDestinazione;
+        this.orarioPartenza = orarioPartenza;
         this.stato = stato;
     }
 

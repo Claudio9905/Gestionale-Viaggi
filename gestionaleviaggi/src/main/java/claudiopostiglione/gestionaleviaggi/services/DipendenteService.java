@@ -6,6 +6,7 @@ import claudiopostiglione.gestionaleviaggi.exceptions.IdNotFoundException;
 import claudiopostiglione.gestionaleviaggi.payload.DipendenteDTO;
 import claudiopostiglione.gestionaleviaggi.repositories.DipendenteRepository;
 import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -24,6 +28,10 @@ public class DipendenteService {
 
     @Autowired
     private Cloudinary imageUploader;
+
+    //Questi attributi mi serviranno per controllare alcuni parametri del file
+    private static final long MAX_SIZE = 5 * 1024 * 1024; // corrispondono a 5MB
+    private static final List<String> ALLOWED_FORMAT = List.of("image/jpeg", "image/png");
 
     // 1. per la chiamata POST
     public Dipendente saveDipendente(DipendenteDTO body) {
@@ -86,6 +94,32 @@ public class DipendenteService {
     public void findDipendenteByIdAndDelete(UUID dipendenteId) {
         Dipendente dipendenteFound = this.findDipendenteById(dipendenteId);
         this.dipendenteRepository.delete(dipendenteFound);
+    }
+
+    //6. per la chiamata PATCH (riguardo all'upload dell'immagine)
+    public Dipendente uploadImageProfile(MultipartFile file, UUID dipendenteId) {
+
+        if (file.isEmpty()) throw new BadRequestException("File vuoto!");
+        if (file.getSize() > MAX_SIZE)
+            throw new BadRequestException("La dimensione del file è troppo grande, il limite è di 5MB");
+        if (!(ALLOWED_FORMAT.contains(file.getContentType())))
+            throw new BadRequestException("Attenzione, il formato del file è sbagliato. Formato file acconsentito: .jpeg, .png");
+
+        Dipendente dipendenteFound = this.findDipendenteById(dipendenteId);
+
+        try {
+            //Cattura dell'URL dell'immagine
+            Map resultMap = imageUploader.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            String imageURL = (String) resultMap.get("url");
+
+            //Salvataggio dell'immagine catturata
+            dipendenteFound.setImageProfile(imageURL);
+            this.dipendenteRepository.save(dipendenteFound);
+            return dipendenteFound;
+        } catch (Exception e) {
+            throw new BadRequestException("Errore nell'upload dell'immagine");
+        }
+
     }
 
 }
