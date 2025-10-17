@@ -1,0 +1,46 @@
+package claudiopostiglione.gestionaleviaggi.entities;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+import java.time.LocalDate;
+import java.util.Locale;
+import java.util.UUID;
+
+@Entity
+@Table(name = "prenotazione")
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+public class Prenotazione {
+
+    //Attributi
+    @Id
+    @GeneratedValue
+    private UUID id;
+    @Column(name = "Data_Richiesta")
+    private LocalDate dataRichiesta;
+    @Column(name = "Note/Preferenze_dipendente")
+    private String notePreferenze;
+
+    @ManyToOne
+    @JoinColumn(name = "dipendente")
+    private Dipendente dipendente;
+
+    @ManyToOne
+    @JoinColumn(name = "viaggio")
+    private Viaggio viaggio;
+
+    //Costruttori
+    public Prenotazione(LocalDate dataRichiesta, String notePreferenze){
+        this.dataRichiesta = dataRichiesta;
+        this.notePreferenze = notePreferenze;
+    }
+
+    //Metodi
+
+}
